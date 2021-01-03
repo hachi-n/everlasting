@@ -18,7 +18,6 @@ var (
 
 func NewModal(app *tview.Application, executeFilepath string ) *Modal {
 
-
 	modal := tview.NewModal().
 		SetText("Do you want to quit the application?").
 		AddButtons([]string{"OK", "Quit", "Cancel"}).

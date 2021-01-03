@@ -6,9 +6,14 @@ import (
 	"io"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"strings"
-	"syscall"
 )
+
+func Root(realFileName string) string {
+	splited := strings.SplitN(realFileName,"/", 3)
+	return filepath.Join("/", splited[0], splited[1])
+}
 
 func RealPath(pkgerFileName string) string {
 	splited := strings.Split(pkgerFileName, ":")
@@ -35,48 +40,57 @@ func ReadDir(realFileName string) ([]os.FileInfo, error) {
 	return fileinfos, err
 }
 
+const dumpRootPath = "/tmp"
+
+func Dump(realFileName string) error {
+
+	return pkger.Walk(realFileName, func(path string, info os.FileInfo, err error) error {
+		dumpPath := filepath.Join(dumpRootPath, RealPath(path))
+		if info.IsDir() {
+			if err := os.MkdirAll(dumpPath, 0755); err != nil {
+				return err
+			}
+		} else {
+			f, err := os.OpenFile(dumpPath, os.O_WRONLY|os.O_CREATE, 0755)
+			if err != nil {
+				return err
+			}
+
+			packedFile, err := pkger.Open(path)
+			if err != nil {
+				return err
+			}
+			io.Copy(f, packedFile)
+		}
+		return nil
+	})
+}
+
+func ClearDump(realFileName string) error {
+	dumpPath := filepath.Join(dumpRootPath, realFileName)
+	return os.RemoveAll(dumpPath)
+}
+
 func Exec(executeFilepath string) {
-	const receiverCommand = "bash"
-
-	cmdPipeGenerator := func(cmd *exec.Cmd) (io.WriteCloser, io.ReadCloser){
-		wCloser, err := cmd.StdinPipe()
-		if err != nil {
-			fmt.Println(err)
-		}
-
-		rCloser, err := cmd.StdoutPipe()
-		if err != nil {
-			fmt.Println(err)
-		}
-		return wCloser, rCloser
-	}
-
-	f, err := pkger.Open(executeFilepath)
+	rootPath := Root(executeFilepath)
+	err := Dump(rootPath)
 	if err != nil {
 		fmt.Println(err)
 	}
 
-	cmd := exec.Command(receiverCommand)
-	wCloser, rCloser := cmdPipeGenerator(cmd)
+	tempPath := filepath.Join(dumpRootPath, executeFilepath)
 
 	// Execute command
-	func () {
-		defer wCloser.Close()
-
-		err = cmd.Start()
-		if err != nil {
-			fmt.Println(err)
-		}
-		_, err = io.Copy(wCloser, f)
-		if err != nil {
-			fmt.Println(err)
-		}
-	}()
-
-	// output result
-	_, err = io.Copy(os.Stdout, rCloser)
+	cmd := exec.Command(tempPath)
+	output, err := cmd.Output()
 	if err != nil {
 		fmt.Println(err)
 	}
-	syscall.ForkExec()
+
+	fmt.Println(string(output))
+
+	err = ClearDump(rootPath)
+	if err != nil {
+		fmt.Println(err)
+	}
 }
