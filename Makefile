@@ -1,3 +1,6 @@
+get-depends:
+	go get github.com/markbates/pkger/cmd/pkger
+
 clean:
 	rm -f ./bin/everlasting
 

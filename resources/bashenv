@@ -1,0 +1,89 @@
+#!/bin/bash
+
+os_type() {
+    local os
+    if [ "$(uname)" == 'Darwin' ]; then
+      os='mac'
+    elif [ "$(expr substr $(uname -s) 1 5)" == 'Linux' ]; then
+      os='linux'
+    elif [ "$(expr substr $(uname -s) 1 10)" == 'MINGW32_NT' ]; then                                                                                           
+      os='cygwin'
+    else
+      echo "Your platform ($(uname -a)) is not supported."
+      exit 1
+    fi
+    echo ${os}
+}
+
+os_bit() {
+    echo $(uname -m);
+}
+
+# Get Linux distribution name
+os_distribution() {
+    local distribution
+    if   [ -e /etc/debian_version ] || [ -e /etc/debian_release ]; then
+        # Check Ubuntu or Debian
+        if [ -e /etc/lsb-release ]; then
+            # Ubuntu
+            distribution="ubuntu"
+        else
+            # Debian
+            distribution="debian"
+        fi
+    elif [ -e /etc/fedora-release ]; then
+        # Fedra
+        distribution="fedora"
+    elif [ -e /etc/redhat-release ]; then
+        if [ -e /etc/oracle-release ]; then
+            # Oracle Linux
+            distribution="oracle"
+        else
+            # Red Hat Enterprise Linux
+            distribution="redhat"
+        fi
+    elif [ -e /etc/arch-release ]; then
+        # Arch Linux
+        distribution="arch"
+    elif [ -e /etc/turbolinux-release ]; then
+        # Turbolinux
+        distribution="turbol"
+    elif [ -e /etc/SuSE-release ]; then
+        # SuSE Linux
+        distribution="suse"
+    elif [ -e /etc/mandriva-release ]; then
+        # Mandriva Linux
+        distribution="mandriva"
+    elif [ -e /etc/vine-release ]; then
+        # Vine Linux
+        distribution="vine"
+    elif [ -e /etc/gentoo-release ]; then
+        # Gentoo Linux
+        distribution="gentoo"
+    else
+        # Other
+        distribution="unknown"
+    fi
+
+    echo ${distribution}
+}
+
+# Get distribution and bit
+set_os_info() {
+    export DISTRIBUTION=$(os_distribution)
+    export OS_ARCH=$(os_bit)
+}
+
+set_os() {
+    export OS=$(os_type)
+}
+
+setenv() {
+    set_os
+    set_os_info
+}
+
+export BASHRC_PATH="${HOME}/.bashrc"
+setenv
+
+

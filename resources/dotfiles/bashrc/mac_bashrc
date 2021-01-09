@@ -1,0 +1,117 @@
+##### Editor
+
+export EDITOR=vim
+
+
+##### 
+
+
+
+
+
+
+##### prompt 
+
+## starship
+if type starship >/dev/null 2>&1; then
+  eval "$(starship init bash)"
+fi
+
+#####
+
+
+##### tools
+
+## direnv 
+if type direnv >/dev/null 2>&1; then
+  eval "$(direnv hook bash)"
+fi
+
+## tmux
+if [ $SHLVL = 1 ]; then
+  tmux
+fi
+
+#####
+
+
+##### language
+
+## goenv 
+if [ -d ${HOME}/.goenv ];then
+  export GOENV_ROOT="$HOME/.goenv"
+  export PATH="$GOENV_ROOT/bin:$PATH"
+  eval "$(goenv init -)"
+fi
+
+## rbenv 
+if [ -d ${HOME}/.rbenv ];then
+  export RBENV_ROOT="$HOME/.rbenv"
+  export PATH="$RBENV_ROOT/bin:$PATH"
+  eval "$(rbenv init -)"
+fi
+
+## pyenv 
+if [ -d ${HOME}/.pyenv ];then
+  export PYENV_ROOT="$HOME/.pyenv"
+  export PATH="$PYENV_ROOT/bin:$PATH"
+  eval "$(pyenv init -)"
+fi
+
+##### language
+
+#fzf
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash
+
+
+
+##### commands
+
+alias ls='ls -G'
+alias ll='ls -l'
+alias vi='vim'
+alias chrome="open /Applications/Google\ Chrome.app"
+alias echo='gecho'
+alias resh='__resh'
+alias raspberry='__raspberrypi_connection'
+alias "readlinkf"=__readlinkf
+
+###### functions
+
+__resh() {
+  echo "exec $SHELL -l"
+  exec $SHELL -l
+}
+
+__raspberrypi_connection() {
+    local user="hachi-n"
+    local host="$(ping raspberrypi.local -c 1 | awk 'NR==2{print substr($4,1,length($4)-1)}')"
+    local key="~/.ssh/keys/raspberrypi.pem"
+
+    exec_command="ssh -i ${key} ${user}@${host}"
+    bash -c "${exec_command}"
+}
+
+__readlinkf() {
+  TARGET_FILE=$1
+  
+  while [ "$TARGET_FILE" != "" ]; do
+      cd `dirname $TARGET_FILE`
+      FILENAME=`basename $TARGET_FILE`
+      TARGET_FILE=`readlink $FILENAME`
+  done
+  
+  echo `pwd -P`/$FILENAME
+}
+
+
+
+# powerline-go
+# function _update_ps1() {
+#     PS1="$($GOPATH/bin/powerline-go -error $?)"
+# }
+# 
+# if [ "$TERM" != "linux" ] && [ -f "$GOPATH/bin/powerline-go" ]; then
+#     PROMPT_COMMAND="_update_ps1; $PROMPT_COMMAND"
+# fi
+
