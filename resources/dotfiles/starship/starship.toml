@@ -15,17 +15,10 @@ add_newline = false
 
 # ## UseCase3
 format = """
-$custom\
 $time\
-$username\
-$hostname\
 $shlvl\
 $kubernetes\
 $directory\
-$git_branch\
-$git_commit\
-$git_state\
-$git_status\
 $hg_branch\
 $docker_context\
 $package\
@@ -48,3 +41,148 @@ $php\
 $purescript\
 $python\
 $ruby\
+$rust\
+$swift\
+$terraform\
+$zig\
+$nix_shell\
+$conda\
+$memory_usage\
+$aws\
+$gcloud\
+$openstack\
+$env_var\
+$crystal\
+$cmd_duration\
+$line_break\
+$lua\
+$jobs\
+$battery\
+$status\
+$custom\
+$username\
+$hostname\
+$git_branch\
+$git_commit\
+$git_state\
+$git_status\
+$character
+"""
+
+[custom.date]
+command = "date \"+%Y/%m/%d %H:%M:%S\""
+files = ["date"]
+when = """ [ 0 == 0 ] """
+format = '[\[ $output \]]($style) '
+# style = "bold #666699"
+style = "bold red"
+
+[time]
+disabled = true
+format = '[\[ $time \]]($style) '
+time_format = "%T"
+utc_time_offset = "+9"
+# time_range = "10:00:00-14:00:00"
+style = "bold #666699"
+
+
+[cmd_duration]
+min_time = 2_000
+show_milliseconds=true
+format = " [$duration](bold red) "
+min_time_to_notify=45_000
+
+
+## group1
+[username]
+# style_user = "bold #666699"
+style_user = "bold red"
+style_root = "red bold"
+format = "[$user]($style)"
+disabled = false
+show_always = true
+
+[hostname]
+ssh_only = true
+format =  " [@$hostname]($style) "
+style = "bold #666699"
+trim_at = ".companyname.com"
+disabled = false
+
+[directory]
+format = " [$path]($style)[$read_only]($read_only_style) "
+truncate_to_repo = false
+style = "bold #669999 #ffc266"
+truncation_length = 10
+truncation_symbol = ""
+
+[git_branch]
+format = " [$symbol$branch]($style) "
+style = "bold purple"
+# style = "bold blue"
+
+
+[git_commit]
+format = "[\\($hash\\)]($style) [\\($tag\\)]($style)"
+style = "bold green"	
+commit_hash_length = 7
+
+[git_state]
+format = '[\($state( $progress_current of $progress_total)\)]($style) '
+style = "bold purple"
+
+[git_status]
+style = "bold purple"
+
+[jobs]
+symbol = "+ "
+threshold = 1
+
+
+## group2
+[golang]
+format=" [$symbol $version]($style) "
+symbol="🐀 "
+style="bold yellow"
+
+[ruby]
+format=" [$symbol $version]($style) "
+symbol="💎 "
+style="bold yellow"
+
+[python]
+format=" [$symbol $version]($style) "
+symbol="🐍 "
+style="bold yellow"
+
+[crystal]
+format=" [$symbol|$version|]($style) "
+symbol="crystal"
+style="bold yellow"
+
+[php]
+format=" [$symbol|$version|]($style) "
+symbol="php"
+style="bold yellow"
+
+
+## group3
+[env_var]
+variable = "SHELL"
+default = "unknown shell"
+format=" [$symbol $env_value]($style) "
+symbol=""
+style="bold cyan"
+disabled=true
+
+
+## group4
+[character]
+format = " $symbol [▷](bold red) "
+success_symbol = "[✔︎](bold green) "
+error_symbol = "[✗](bold red) "
+vicmd_symbol = "[❮](bold green)"
+
+[aws]
+disabled=true
+
