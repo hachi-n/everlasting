@@ -1,3 +1,50 @@
-[directory]
-truncation_length = 100
-truncate_to_repo = false
+add_newline = false
+
+## UseCase1
+# format = """
+# [┌───────────────────────────────────────────────────────────────────────────────────────────────────────────────>](bold  #b3b3cc)
+# [│](bold #b3b3cc) $username$hostname$directory$git_branch$git_commit$git_state$git_status$env_var$jobs
+# [│](bold #b3b3cc) $shlvl$kubernetes$hg_branch$docker_context$package$cmake$dart$dotnet$elixir$elm$erlang$golang$helm$java$julia$kotlin$nim$nodejs$ocaml$perl$php$purescript$python$ruby$rust$swift$terraform$zig$nix_shell$conda$openstack$lua$crystal 
+# [└─>](bold #b3b3cc) $character
+# """
+
+# ## UseCase2
+# format = """
+# $custom$all
+# """
+
+# ## UseCase3
+format = """
+$custom\
+$time\
+$username\
+$hostname\
+$shlvl\
+$kubernetes\
+$directory\
+$git_branch\
+$git_commit\
+$git_state\
+$git_status\
+$hg_branch\
+$docker_context\
+$package\
+$cmake\
+$dart\
+$dotnet\
+$elixir\
+$elm\
+$erlang\
+$golang\
+$helm\
+$java\
+$julia\
+$kotlin\
+$nim\
+$nodejs\
+$ocaml\
+$perl\
+$php\
+$purescript\
+$python\
+$ruby\
